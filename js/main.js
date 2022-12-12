@@ -1,5 +1,6 @@
 import { Planta } from "./planta.js";
-import { Zombie } from "./zombie.js"
+import { Zombie } from "./zombie.js";
+import { Recurso } from "./recurso.js";
 
 var canvas  = document.getElementById("canvas1");
 var ctx = canvas.getContext("2d");
@@ -21,6 +22,7 @@ const balas = [];
 let soles = 300;
 
 const recursos = [];
+const mensajesFlotantes = [];
 
 let puntuacion = 0;
 const partidaGanada = 300;
@@ -36,8 +38,6 @@ window.onload = function() {
     this.balas = balas;
 }
 
-
-// Tablero
 const controlBar = {
     width: canvas.width,
     height: cellSize,
@@ -51,16 +51,6 @@ const mouse = {
 }
 
 let canvasPosicion = canvas.getBoundingClientRect();
-
-canvas.addEventListener('mousemove', function(e) {
-    mouse.x = e.x - canvasPosicion.left;
-    mouse.y = e.y - canvasPosicion.top;
-})
-
-canvas.addEventListener('mouseleave', function() {
-    mouse.x = undefined;
-    mouse.y = undefined;
-})
 
 class Celda {
     constructor(x, y){
@@ -77,6 +67,71 @@ class Celda {
         }
     }
 }
+
+class mensajesFlotante {
+    constructor(valor, x, y, size, color) {
+        this.valor = valor;
+        this. x = x;
+        this.y = y;
+        this.size = size;
+        this.span = 0;
+        this.color = color;
+        this.opacidad = 1;
+    }
+
+    update() {
+        this.y -= 0.3;
+        this.span += 1;
+        if(this.opacidad > 0.01) {
+            this.opacidad -= 0.01;
+        }
+    }
+    
+    draw() {
+        ctx.globalAlpha = this.opacidad;
+        ctx.fillStyle = this.color;
+        ctx.font = this.size + 'px Creepster';
+        ctx.fillText(this.valor, this.x - 60, this.y - 15);
+        ctx.globalAlpha = 1;
+    }
+}
+
+canvas.addEventListener('mousemove', function(e) {
+    mouse.x = e.x - canvasPosicion.left;
+    mouse.y = e.y - canvasPosicion.top;
+})
+
+canvas.addEventListener('mouseleave', function() {
+    mouse.x = undefined;
+    mouse.y = undefined;
+});
+
+canvas.addEventListener('click', function() {
+    const gridPosicionX = mouse.x - (mouse.x % cellSize) + cell;
+    const gridPosicionY = mouse.y - (mouse.y % cellSize)+ cell;
+
+    let costePlanta = 100;
+
+    if((gridPosicionY < cellSize) || (gridPosicionY > canvas.height - cellSize) || (gridPosicionX < cellSize*3) ||(gridPosicionX > canvas.width - (cellSize * 5))) {
+            return;
+    }
+    
+    for(let i = 0; i < plantas.length; i++) {
+        if(plantas[i].x == gridPosicionX && plantas[i].y == gridPosicionY) 
+        return;
+    }
+
+    if(soles >= costePlanta) {
+        plantas.push(new Planta(gridPosicionX, gridPosicionY, cellSize, cell));
+        soles = soles - costePlanta;
+    } else {
+        mensajesFlotantes.push(new mensajesFlotante('Se necesitan más recursos', mouse.x, mouse.y, 20, 'blue'));
+    }
+});
+
+window.addEventListener('resize', function() {
+    canvasPosicion = canvas.getBoundingClientRect();
+});
 
 function createGrid() {
     for(let y = cellSize; y < canvas.height; y+= cellSize) {
@@ -114,28 +169,6 @@ function dibujarBalas() {
     }
 }
 
-canvas.addEventListener('click', function() {
-    const gridPosicionX = mouse.x - (mouse.x % cellSize) + cell;
-    const gridPosicionY = mouse.y - (mouse.y % cellSize)+ cell;
-
-    let costePlanta = 100;
-
-    if((gridPosicionY < cellSize) || (gridPosicionY > canvas.height - cellSize) || (gridPosicionX < cellSize*3) ||(gridPosicionX > canvas.width - (cellSize * 5))) {
-            return;
-    }
-    
-    for(let i = 0; i < plantas.length; i++) {
-        if(plantas[i].x == gridPosicionX && plantas[i].y == gridPosicionY) 
-        return;
-    }
-
-    if(soles >= costePlanta) {
-        plantas.push(new Planta(gridPosicionX, gridPosicionY, cellSize, cell));
-
-        soles = soles - costePlanta;
-    }
-});
-
 function dibujarPlanta() {
     for(let i = 0; i < plantas.length; i++) {
         plantas[i].draw();
@@ -164,69 +197,17 @@ function dibujarPlanta() {
 }
 
 // Mensajes flotantes
-const mensajesFlotantes = [];
-
-class mensajesFlotante {
-    constructor(valor, x, y, size, color) {
-        this.valor = valor;
-        this. x = x;
-        this.y = y;
-        this.size = size;
-        this.span = 0;
-        this.color = color;
-        this.opacidad = 1;
-    }
-
-    update() {
-        this.x -= 0.3;
-        this.span += 1;
-        if(this.opacidad > 0.01) {
-            this.opacidad -= 0.01;
-        }
-    }
-    
-    draw() {
-        ctx.globalAlpha = this.opacidad;
-        ctx.fillStyle = this.color;
-        ctx.font = this.size + 'px Creepster';
-        ctx.fillText(this.valor, this.x, this.y);
-        ctx.globalAlpha = 1;
-    }
-}
-
 function dibujarMensajesFlotantes() {
     for(let i = 0; i < mensajesFlotantes.length; i++) {
         mensajesFlotantes[i].update();
         mensajesFlotantes[i].draw();
+
+        if(mensajesFlotantes[i].span >= 50) {
+            mensajesFlotantes.splice(i, 1);
+            i--;
+        }
     }
 }
-
-// Enemigos
-// class Zombie {
-//     constructor(PosicionVertical){
-//         this.x = canvas.width;
-//         this.y = PosicionVertical;
-//         this.width = cellSize - cell * 2;
-//         this.height = cellSize - cell * 2;
-//         this.velocidad = Math.random() * 0.1 + 0.2;
-//         this.movimiento = this.velocidad;
-//         this.vida = 100;
-//         this.vidaMax = this.vida;
-//     }
-
-//     update() {
-//         this.x -= this.movimiento;
-
-//     }
-
-//     draw() {
-//         ctx.fillStyle = 'red';
-//         ctx.fillRect(this.x, this.y, this.width, this.height);
-//         ctx.fillStyle = 'black';
-//         ctx.font = '30px Creepster';
-//         ctx.fillText(Math.floor(this.vida), this.x +27, this.y + 25);
-//     }
-// }
 
 function dibujarZombies() {
     for(let i = 0; i < zombies.length; i++) {
@@ -238,8 +219,6 @@ function dibujarZombies() {
         }
 
         if(zombies[i].vida <= 0) {
-            let solecito = zombies[i].vidaMax/5;
-            soles += solecito;
             puntuacion += 10;
             const encontrarPos = posicionZombies.indexOf(zombies[i].y);
             posicionZombies.splice(encontrarPos, 1);
@@ -251,41 +230,16 @@ function dibujarZombies() {
 
     if(frame % intervaloZombies === 0 && puntuacion < partidaGanada) {
         let pV = Math.floor(Math.random() * 5 + 1) * cellSize + cell;
-        zombies.push(new Zombie(pV, canvas.width));
+        zombies.push(new Zombie(pV, canvas.width, cellSize, cell));
         posicionZombies.push(pV);
         if(intervaloZombies > 120) intervaloZombies -= 20;
         console.log(posicionZombies);
     }
 }
 
-// Recursos
-const cantidad = 20;
-class Recurso {
-    constructor() {
-        this.x = Math.random() * cellSize*2 + cellSize*4;
-        this.y = (Math.floor(Math.random() * 1)) * cellSize + 25;
-        this.width = cellSize * 0.6;
-        this.height = cellSize * 0.6;
-        this.cantidad = cantidad;
-        this.velocidad = 0.5;
-    }
-
-    update() {
-        this.y += this.velocidad;
-    }
-
-    draw() {
-        ctx.fillStyle = 'yellow';
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.fillStyle = 'black';
-        ctx.font = '20px Creepster';
-        ctx.fillText(this.cantidad, this.x + 15, this.y + 25);
-    }
-}
-
 function dibujarRecursos() {
     if(frame % 500 === 0 && puntuacion < partidaGanada) {
-        recursos.push(new Recurso());
+        recursos.push(new Recurso(cellSize, ctx));
     }
 
     for(let i = 0; i < recursos.length; i++) {
@@ -293,6 +247,8 @@ function dibujarRecursos() {
         recursos[i].draw();
         if(recursos[i] && mouse.x && mouse.y && colision(recursos[i],  mouse)) {
             soles += recursos[i].cantidad;
+            mensajesFlotantes.push(new mensajesFlotante('+' + recursos[i].cantidad, recursos[i].x, recursos[i].y, 50, 'black'));
+            mensajesFlotantes.push(new mensajesFlotante('+' + recursos[i].cantidad, cellSize * 3, 40, 20, 'gold'));
             recursos.splice(i, 1);
             i--;
         }
@@ -329,6 +285,7 @@ function animate() {
     dibujarBalas();
     dibujarZombies();
     EstadoPartida();
+    dibujarMensajesFlotantes();
     frame++;
     if(!gameOver) {requestAnimationFrame(animate)};
 }
@@ -341,7 +298,3 @@ function colision(first, second) {
             return true;
         }
 }
-
-window.addEventListener('resize', function() {
-    canvasPosicion = canvas.getBoundingClientRect();
-});

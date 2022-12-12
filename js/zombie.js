@@ -1,5 +1,5 @@
 export class Zombie {
-    constructor(PosicionVertical, canvas_width){
+    constructor(PosicionVertical, canvas_width, cellSize, cell){
         this.x = canvas_width;
         this.y = PosicionVertical;
         this.width = cellSize - cell * 2;
