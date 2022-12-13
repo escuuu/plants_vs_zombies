@@ -57,7 +57,7 @@ export class Zombie {
             this.spriteWidth = 129;
             this.spriteHeigth = 168;
 
-            ctx.drawImage(this.tipoComiendo, this.frameX * this.spriteWidth, 0, this.spriteWidth, this.spriteHeigth, this.x, this.y, this.width, this.height + 15);
+            ctx.drawImage(this.tipoComiendo, this.frameX * this.spriteWidth, 0, this.spriteWidth, this.spriteHeigth, this.x, this.y - 10, this.width, this.height + 30);
         }
         
     }

@@ -268,6 +268,7 @@ function dibujarRecursos() {
 
 // Herramientas
 function EstadoPartida() {
+    ctx.fillStyle = 'black';
     ctx.font = '55px Creepster';
     ctx.fillText(soles, 100, 52);
 
