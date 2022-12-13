@@ -52,7 +52,7 @@ const mouse = {
 
 let canvasPosicion = canvas.getBoundingClientRect();
 
-//Classes
+//Clases
 class Celda {
     constructor(x, y){
         this.x = x;
@@ -152,6 +152,7 @@ function dibujarCelda() {
     }
 }
 
+//Balas
 //Posibilidad de poner setTimeout en funcion draw;
 function dibujarBalas() {
     for(let i = 0; i < balas.length; i++) {
