@@ -10,7 +10,7 @@ export class Recurso {
         this.width = cellSize * 0.8;
         this.height = cellSize * 0.8;
         this.cantidad = cantidad;
-        this.velocidad = 0.5;
+        this.velocidad = 0.9;
         this.ctx = ctx;
         this.img = sol;
     }

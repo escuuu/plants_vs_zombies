@@ -9,7 +9,7 @@ export class Zombie {
         this.y = PosicionVertical;
         this.width = cellSize - cell * 2;
         this.height = cellSize - cell * 2;
-        this.velocidad = Math.random() * 0.05 + 0.07;
+        this.velocidad = Math.random() * 0.1 + 0.3;
         this.movimiento = this.velocidad;
         this.vida = 200;
         this.vidaMax = this.vida;
@@ -24,7 +24,7 @@ export class Zombie {
 
     update(frame) {
         this.x -= this.movimiento;
-        if(frame % 20 === 0) {
+        if(frame % 10 === 0) {
             if(this.frameX < this.maxFrame) this.frameX++;
             else this.frameX = this.minFrame;
         }

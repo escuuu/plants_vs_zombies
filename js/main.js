@@ -52,6 +52,7 @@ const mouse = {
 
 let canvasPosicion = canvas.getBoundingClientRect();
 
+//Classes
 class Celda {
     constructor(x, y){
         this.x = x;
@@ -61,10 +62,10 @@ class Celda {
     }
 
     draw() {
-        //if(mouse.x && mouse.y && colision(this, mouse)){
+        if(mouse.x && mouse.y && colision(this, mouse)){
             ctx.strokeStyle = 'black';
             ctx.strokeRect(this.x, this.y, this.width, this.height);
-        //}
+        }
     }
 }
 
@@ -96,6 +97,7 @@ class mensajesFlotante {
     }
 }
 
+//Listeners
 canvas.addEventListener('mousemove', function(e) {
     mouse.x = e.x - canvasPosicion.left;
     mouse.y = e.y - canvasPosicion.top;
@@ -133,6 +135,7 @@ window.addEventListener('resize', function() {
     canvasPosicion = canvas.getBoundingClientRect();
 });
 
+//Tablero
 function createGrid() {
     for(let y = cellSize; y < canvas.height; y+= cellSize) {
         for(let x = 0; x < canvas.width ; x += cellSize) {
@@ -142,6 +145,7 @@ function createGrid() {
     animate();
 }
 
+//Celda
 function dibujarCelda() {
     for(let i = 0; i < gameGrid.length; i++) {
         gameGrid[i].draw();
@@ -169,6 +173,7 @@ function dibujarBalas() {
     }
 }
 
+//Planta
 function dibujarPlanta() {
     for(let i = 0; i < plantas.length; i++) {
         plantas[i].draw();
@@ -209,6 +214,7 @@ function dibujarMensajesFlotantes() {
     }
 }
 
+//Zombies
 function dibujarZombies() {
     for(let i = 0; i < zombies.length; i++) {
         zombies[i].update(frame);
@@ -237,6 +243,7 @@ function dibujarZombies() {
     }
 }
 
+//Recursos
 function dibujarRecursos() {
     if(frame % 500 === 0 && puntuacion < partidaGanada) {
         recursos.push(new Recurso(cellSize, ctx));

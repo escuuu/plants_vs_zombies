@@ -6,7 +6,7 @@ export class Bala {
         this.width = 10;
         this.height = 10;
         this.poder = 20;
-        this.velocidad = 2;
+        this.velocidad = 5;
     }
 
     update() {
