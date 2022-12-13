@@ -15,6 +15,7 @@ const gameGrid = [];
 
 const zombies = [];
 const posicionZombies = [];
+let comer = false;
 let intervaloZombies = 600;
 
 const plantas = [];
@@ -25,7 +26,7 @@ const recursos = [];
 const mensajesFlotantes = [];
 
 let puntuacion = 0;
-const partidaGanada = 300;
+const partidaGanada = 500;
 
 let frame = 0;
 let gameOver = false;
@@ -114,7 +115,7 @@ canvas.addEventListener('click', function() {
 
     let costePlanta = 100;
 
-    if((gridPosicionY < cellSize) || (gridPosicionY > canvas.height - cellSize) || (gridPosicionX < cellSize*3) ||(gridPosicionX > canvas.width - (cellSize * 5))) {
+    if((gridPosicionY < cellSize) || (gridPosicionY > canvas.height - cellSize) || (gridPosicionX < cellSize*3) ||(gridPosicionX > canvas.width - (cellSize * 2))) {
             return;
     }
     
@@ -189,11 +190,13 @@ function dibujarPlanta() {
         for(let j = 0; j < zombies.length; j++) {
 
             if(plantas[i] && colision(plantas[i], zombies[j])) {
+                zombies[j].comer = true;
                 zombies[j].movimiento = 0;
                 plantas[i].vida -= 0.1;
             }
 
             if(plantas[i] && plantas[i].vida <= 0){
+                zombies[i].comer = false;
                 plantas.splice(i, 1);
                 i--;
                 zombies[j].movimiento = zombies[j].velocidad;
@@ -256,7 +259,7 @@ function dibujarRecursos() {
         if(recursos[i] && mouse.x && mouse.y && colision(recursos[i],  mouse)) {
             soles += recursos[i].cantidad;
             mensajesFlotantes.push(new mensajesFlotante('+' + recursos[i].cantidad, recursos[i].x, recursos[i].y, 50, 'black'));
-            mensajesFlotantes.push(new mensajesFlotante('+' + recursos[i].cantidad, cellSize * 3, 40, 20, 'black'));
+            mensajesFlotantes.push(new mensajesFlotante('+' + recursos[i].cantidad, cellSize * 3, 10, 20, 'black'));
             recursos.splice(i, 1);
             i--;
         }
