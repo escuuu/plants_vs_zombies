@@ -273,9 +273,12 @@ function EstadoPartida() {
     ctx.fillText(soles, 100, 52);
 
     if(gameOver) {
+
         ctx.fillStyle = 'black';
-        ctx.font = '90px Creepster';
-        ctx.fillText('Game Over', 350, 300);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'green';
+        ctx.font = '110px Creepster';
+        ctx.fillText('Game Over', 350, 350);
     }
 
     if(puntuacion >= partidaGanada && zombies.length === 0) {
