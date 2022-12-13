@@ -5,7 +5,7 @@ import { Recurso } from "./recurso.js";
 var canvas  = document.getElementById("canvas1");
 var ctx = canvas.getContext("2d");
 
-canvas.width = 1399;
+canvas.width = 1150;
 canvas.height = 600;
 
 // Variables globales
@@ -61,10 +61,10 @@ class Celda {
     }
 
     draw() {
-        if(mouse.x && mouse.y && colision(this, mouse)){
+        //if(mouse.x && mouse.y && colision(this, mouse)){
             ctx.strokeStyle = 'black';
             ctx.strokeRect(this.x, this.y, this.width, this.height);
-        }
+        //}
     }
 }
 
@@ -211,7 +211,7 @@ function dibujarMensajesFlotantes() {
 
 function dibujarZombies() {
     for(let i = 0; i < zombies.length; i++) {
-        zombies[i].update();
+        zombies[i].update(frame);
         zombies[i].draw();
 
         if(zombies[i].x <= cellSize*2.5) {
@@ -224,16 +224,16 @@ function dibujarZombies() {
             posicionZombies.splice(encontrarPos, 1);
             zombies.splice(i, 1);
             i--;
-            console.log(posicionZombies);
         }
     }
 
     if(frame % intervaloZombies === 0 && puntuacion < partidaGanada) {
         let pV = Math.floor(Math.random() * 5 + 1) * cellSize + cell;
+        //console.log(frame);
         zombies.push(new Zombie(pV, canvas.width, cellSize, cell));
         posicionZombies.push(pV);
-        if(intervaloZombies > 120) intervaloZombies -= 20;
-        console.log(posicionZombies);
+
+        if(intervaloZombies > 120) intervaloZombies -= 10;
     }
 }
 
@@ -248,7 +248,7 @@ function dibujarRecursos() {
         if(recursos[i] && mouse.x && mouse.y && colision(recursos[i],  mouse)) {
             soles += recursos[i].cantidad;
             mensajesFlotantes.push(new mensajesFlotante('+' + recursos[i].cantidad, recursos[i].x, recursos[i].y, 50, 'black'));
-            mensajesFlotantes.push(new mensajesFlotante('+' + recursos[i].cantidad, cellSize * 3, 40, 20, 'gold'));
+            mensajesFlotantes.push(new mensajesFlotante('+' + recursos[i].cantidad, cellSize * 3, 40, 20, 'black'));
             recursos.splice(i, 1);
             i--;
         }
@@ -257,28 +257,29 @@ function dibujarRecursos() {
 
 // Herramientas
 function EstadoPartida() {
-    ctx.fillStyle = 'gold';
-    ctx.font = '30px Creepster';
-    ctx.fillText('Puntuacion: ' + puntuacion, 35, 35);
-    ctx.fillText('Soles: ' + soles, 35, 75);
+    ctx.font = '55px Creepster';
+    ctx.fillText(soles, 100, 52);
 
     if(gameOver) {
-        ctx.fillStyle = 'red';
+        ctx.fillStyle = 'black';
         ctx.font = '90px Creepster';
-        ctx.fillText('Game Over', 550, 300);
+        ctx.fillText('Game Over', 350, 300);
     }
 
     if(puntuacion >= partidaGanada && zombies.length === 0) {
         ctx.fillStyle = 'black';
         ctx.font = '90px Creepster';
-        ctx.fillText('¡GANASTE!', 550, 300);
+        ctx.fillText('¡GANASTE!', 350, 300);
     }
 }
 
 function animate() {
+    const cuadro = new Image();
+    cuadro.src = 'assets/soles.png';
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, cellSize*3, controlBar.height);
+    ctx.drawImage(cuadro, 0, 0, 200, 64);
+
     dibujarCelda();
     dibujarPlanta();
     dibujarRecursos();

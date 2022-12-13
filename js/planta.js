@@ -13,15 +13,12 @@ export class Planta {
     }
 
     draw() {
-        ctx.fillStyle = 'green';
+        if(this.disparo == false) {
+            ctx.fillStyle = 'green';
+        } else {
+            ctx.fillStyle = 'red';
+        }
         ctx.fillRect(this.x, this.y, this.width, this.height);
-
-        // var cesped = new Image();
-        // cesped.src = "assets/multimedia/hiervaClara.png";
-        // cesped.onload = function() {
-        //     ctx.drawImage(cesped, this.x, this.y, this.width, this.height);
-        // }
-
         ctx.fillStyle = 'black';
         ctx.font = '30px Creepster';
         ctx.fillText(Math.floor(this.vida), this.x +27, this.y + 25);
