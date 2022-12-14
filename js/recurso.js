@@ -7,8 +7,8 @@ export class Recurso {
     constructor(cellSize, ctx) {
         this.x = Math.random() * cellSize*2 + cellSize*4;
         this.y = (Math.floor(Math.random() * 1)) * cellSize + 25;
-        this.width = cellSize * 0.8;
-        this.height = cellSize * 0.8;
+        this.width = cellSize;
+        this.height = cellSize;
         this.cantidad = cantidad;
         this.velocidad = 0.9;
         this.ctx = ctx;
@@ -16,7 +16,12 @@ export class Recurso {
     }
 
     update() {
-        this.y += this.velocidad;
+        if(this.y <= this.height * 5) {
+            this.y += this.velocidad;
+        } else {
+            this.velocidad = 0;
+        }
+        
     }
 
     draw() {

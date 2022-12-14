@@ -33,8 +33,8 @@ export class Planta {
             this.spriteHeigth = 353;
             ctx.drawImage(this.tipo[0], this.frameX * this.spriteWidth, 0, this.spriteWidth, this.spriteHeigth, this.x, this.y, this.width, this.height);
         } else {
-             this.spriteHeigth = 306;
-             this.spriteWidth = 320;
+            this.spriteHeigth = 306;
+            this.spriteWidth = 320;
              ctx.drawImage(this.tipo[1], this.frameX * this.spriteWidth, 0, this.spriteWidth, this.spriteHeigth, this.x, this.y, this.width, this.height);
         }
     }

@@ -18,6 +18,8 @@ const posicionZombies = [];
 let comer = false;
 let intervaloZombies = 600;
 
+let plantaElegida = 0;
+
 const plantas = [];
 const balas = [];
 let soles = 300;
@@ -266,6 +268,43 @@ function dibujarRecursos() {
     }
 }
 
+const planta = new Image();
+planta.src = 'assets/Plantas/planta_card.png';
+const planta1 = {
+    img: planta,
+    x: 10,
+    y: 100,
+    width: 90,
+    height: 90
+}
+
+const girasol = new Image();
+girasol.src = 'assets/Plantas/girasol_card.png';
+const planta2 = {
+    img: girasol,
+    x: 10,
+    y: 210,
+    width: 90,
+    height: 90
+}
+
+function elegirPlanta() {
+    ctx.lineWidth = 1;
+    ctx.fillStyle = 'rgb(110, 45, 22)';
+    ctx.fillRect(planta1.x, planta1.y, planta1.width + 10, planta1.height + 10);
+    ctx.drawImage(planta1.img, planta1.x + 5, planta1.y + 5, planta1.width, planta1.height);
+    ctx.fillStyle = 'white';
+    ctx.font = '25px Creepster';
+    ctx.fillText('100', 72, 192);
+
+    ctx.fillStyle = 'rgb(110, 45, 22)';
+    ctx.fillRect(planta2.x, planta2.y, planta2.width + 10, planta2.height + 10);
+    ctx.drawImage(planta2.img, planta2.x + 5, planta2.y + 5, planta2.width, planta2.height);
+    ctx.fillStyle = 'white';
+    ctx.font = '25px Creepster';
+    ctx.fillText('25', 78, 300);
+}
+
 // Herramientas
 function EstadoPartida() {
     ctx.fillStyle = 'black';
@@ -276,9 +315,9 @@ function EstadoPartida() {
 
         ctx.fillStyle = 'black';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'green';
-        ctx.font = '110px Creepster';
-        ctx.fillText('Game Over', 350, 350);
+        ctx.fillStyle = 'rgb(48, 255, 0)';
+        ctx.font = '90px Creepster';
+        ctx.fillText('¡Te han comido los sesos!', 150, 300);
     }
 
     if(puntuacion >= partidaGanada && zombies.length === 0) {
@@ -300,6 +339,7 @@ function animate() {
     dibujarRecursos();
     dibujarBalas();
     dibujarZombies();
+    elegirPlanta();
     EstadoPartida();
     dibujarMensajesFlotantes();
     frame++;
