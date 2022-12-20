@@ -18,11 +18,33 @@ const posicionZombies = [];
 let comer = false;
 let intervaloZombies = 600;
 
+const planta = new Image();
+planta.src = 'assets/Plantas/planta_card.png';
+const planta1 = {
+    img: planta,
+    x: 10,
+    y: 100,
+    width: 90,
+    height: 90
+}
+
+const planta2 = new Image();
+planta2.src = 'assets/Plantas/girasol_card.png';
+const girasol = {
+    img: planta2, 
+    x: 10,
+    y: 210,
+    width: 90,
+    height: 90
+}
+
 let plantaElegida = 0;
+let tipoPlanta;
 
 const plantas = [];
 const balas = [];
 let soles = 300;
+let costePlanta = 0;
 
 const recursos = [];
 const mensajesFlotantes = [];
@@ -50,7 +72,8 @@ const mouse = {
     x: 10,
     y: 10,
     width: 0.1,
-    height: 0.1
+    height: 0.1,
+    click: false
 }
 
 let canvasPosicion = canvas.getBoundingClientRect();
@@ -115,11 +138,18 @@ canvas.addEventListener('click', function() {
     const gridPosicionX = mouse.x - (mouse.x % cellSize) + cell;
     const gridPosicionY = mouse.y - (mouse.y % cellSize)+ cell;
 
-    let costePlanta = 100;
-
     if((gridPosicionY < cellSize) || (gridPosicionY > canvas.height - cellSize) || (gridPosicionX < cellSize*3) ||(gridPosicionX > canvas.width - (cellSize * 2))) {
-            return;
+        if(estaDentro(mouse.x, mouse.y, planta1) === true) {
+            plantaElegida = 1;
+        }
+
+        if(estaDentro(mouse.x, mouse.y, girasol) === true){
+            plantaElegida = 2;
+        }
+        return;
     }
+
+
     
     for(let i = 0; i < plantas.length; i++) {
         if(plantas[i].x == gridPosicionX && plantas[i].y == gridPosicionY) 
@@ -127,7 +157,7 @@ canvas.addEventListener('click', function() {
     }
 
     if(soles >= costePlanta) {
-        plantas.push(new Planta(gridPosicionX, gridPosicionY, cellSize, cell));
+        plantas.push(new Planta(gridPosicionX, gridPosicionY, tipoPlanta));
         soles = soles - costePlanta;
     } else {
         mensajesFlotantes.push(new mensajesFlotante('Se necesitan más recursos', mouse.x, mouse.y, 20, 'blue'));
@@ -138,10 +168,18 @@ window.addEventListener('resize', function() {
     canvasPosicion = canvas.getBoundingClientRect();
 });
 
+window.addEventListener('mousedown', function() {
+    mouse.click = true;
+});
+
+window.addEventListener('mouseup', function() {
+    mouse.click = false;
+})
+
 //Tablero
 function createGrid() {
-    for(let y = cellSize; y < canvas.height; y+= cellSize) {
-        for(let x = 0; x < canvas.width ; x += cellSize) {
+    for(let y = cellSize; y < canvas.height - cellSize; y+= cellSize) {
+        for(let x = 0; x < canvas.width - cellSize * 3 ; x += cellSize) {
             gameGrid.push(new Celda(x, y));
         }
     }
@@ -181,7 +219,7 @@ function dibujarBalas() {
 function dibujarPlanta() {
     for(let i = 0; i < plantas.length; i++) {
         plantas[i].draw();
-        plantas[i].update();
+        plantas[i].update(frame);
 
         if(posicionZombies.indexOf(plantas[i].y) !== -1){
             plantas[i].disparo = true;
@@ -241,7 +279,6 @@ function dibujarZombies() {
 
     if(frame % intervaloZombies === 0 && puntuacion < partidaGanada) {
         let pV = Math.floor(Math.random() * 5 + 1) * cellSize + cell;
-        //console.log(frame);
         zombies.push(new Zombie(pV, canvas.width, cellSize, cell));
         posicionZombies.push(pV);
 
@@ -268,27 +305,7 @@ function dibujarRecursos() {
     }
 }
 
-const planta = new Image();
-planta.src = 'assets/Plantas/planta_card.png';
-const planta1 = {
-    img: planta,
-    x: 10,
-    y: 100,
-    width: 90,
-    height: 90
-}
-
-const girasol = new Image();
-girasol.src = 'assets/Plantas/girasol_card.png';
-const planta2 = {
-    img: girasol,
-    x: 10,
-    y: 210,
-    width: 90,
-    height: 90
-}
-
-function elegirPlanta() {
+function dibujarCartas() {
     ctx.lineWidth = 1;
     ctx.fillStyle = 'rgb(110, 45, 22)';
     ctx.fillRect(planta1.x, planta1.y, planta1.width + 10, planta1.height + 10);
@@ -298,11 +315,33 @@ function elegirPlanta() {
     ctx.fillText('100', 72, 192);
 
     ctx.fillStyle = 'rgb(110, 45, 22)';
-    ctx.fillRect(planta2.x, planta2.y, planta2.width + 10, planta2.height + 10);
-    ctx.drawImage(planta2.img, planta2.x + 5, planta2.y + 5, planta2.width, planta2.height);
+    ctx.fillRect(girasol.x, girasol.y, girasol.width + 10, girasol.height + 10);
+    ctx.drawImage(girasol.img, girasol.x + 5, girasol.y + 5, girasol.width, girasol.height);
     ctx.fillStyle = 'white';
     ctx.font = '25px Creepster';
     ctx.fillText('25', 78, 300);
+}
+
+function elegirPlanta() {
+
+    if(plantaElegida === 1) {
+        ctx.fillStyle = 'rgba(110, 45, 22, 0.5)';
+        ctx.fillRect(planta1.x, planta1.y, planta1.width + 10, planta1.height + 10);
+        tipoPlanta = 0;
+        costePlanta = 100;
+    }
+
+    if(plantaElegida === 2) {
+        ctx.fillStyle = 'rgba(110, 45, 22, 0.5)';
+        ctx.fillRect(girasol.x, girasol.y, girasol.width + 10, girasol.height + 10);
+        tipoPlanta = 1;
+        costePlanta = 25;
+    }
+}
+
+function estaDentro(x, y, planta) {
+    if(x >= planta.x && x <= planta.width + planta.x && y >= planta.y && y <= planta.height + planta.y) return true;
+    else return false;
 }
 
 // Herramientas
@@ -339,6 +378,7 @@ function animate() {
     dibujarRecursos();
     dibujarBalas();
     dibujarZombies();
+    dibujarCartas();
     elegirPlanta();
     EstadoPartida();
     dibujarMensajesFlotantes();
